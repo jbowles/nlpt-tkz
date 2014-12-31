@@ -5,6 +5,28 @@ import (
 	"testing"
 )
 
+/*
+BENCHMARKS: go test -bench=.
+*/
+
+func BenchmarkLex(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		Tokenize("lex", ThoreauThree)
+	}
+}
+
+func BenchmarkBukt(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		Tokenize("bukt", ThoreauThree)
+	}
+}
+
+func BenchmarkSpace(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		Tokenize("space", ThoreauThree)
+	}
+}
+
 func TestTokenizeLexOption(t *testing.T) {
 	tokens, digest := Tokenize("lex", ThoreauThree)
 	//fmt.Printf("Tokens = %v\n DigestType = %T\n", tokens, digest)

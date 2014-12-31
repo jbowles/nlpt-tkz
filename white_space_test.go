@@ -4,9 +4,18 @@ import (
 	"testing"
 )
 
-func BenchmarkWhiteSpace(*testing.B) {
-	var wsdigestone = NewWhiteSpaceDigest()
-	wsdigestone.Tknz(ThoreauThree)
+func BenchmarkWhiteSpaceTknzGoodStr(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		var wsdigestone = NewWhiteSpaceDigest()
+		wsdigestone.Tknz(ThoreauThree)
+	}
+}
+
+func BenchmarkWhiteSpaceTknzBadStr(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		var wsdigesttwo = NewWhiteSpaceDigest()
+		wsdigesttwo.Tknz(BadStr)
+	}
 }
 
 func TestWhiteSpaceTknz(t *testing.T) {
