@@ -14,18 +14,6 @@ import (
 	"github.com/jbowles/go_lexer"
 )
 
-type StateFnDigest struct {
-	TokenCount    int
-	PunctCount    int
-	SpaceCount    int
-	LineCount     int
-	CharCount     int
-	EmptyLine     bool
-	Tokens        []string
-	Punct         []string
-	LastTokenType lexer.TokenType
-}
-
 //Lexer tokens starting from the pre-defined EOF token
 const (
 	T_EOF lexer.TokenType = lexer.TokenTypeEOF
@@ -45,8 +33,8 @@ var (
 	bytesSpace   = []byte{' ', '\t', '\f', '\v'}
 )
 
-func NewStateFnDigest() *StateFnDigest {
-	return &StateFnDigest{
+func NewStateFnDigest() *Digest {
+	return &Digest{
 		TokenCount:    0,
 		PunctCount:    0,
 		SpaceCount:    0,
@@ -54,12 +42,13 @@ func NewStateFnDigest() *StateFnDigest {
 		CharCount:     0,
 		EmptyLine:     true,
 		Tokens:        make([]string, 0, 0),
+		TokenBytes:    make([]byte, 0, 0),
 		Punct:         make([]string, 0, 0),
 		LastTokenType: T_NIL,
 	}
 }
 
-func (digest *StateFnDigest) Tknz(text string) ([]string, *StateFnDigest) {
+func TknzStateFun(text string, digest *Digest) ([]string, *Digest) {
 	reader := bytes.NewBuffer([]byte(text))
 	lex := lexer.NewSize(lexFunc, reader, 100, 1)
 
@@ -71,11 +60,13 @@ func (digest *StateFnDigest) Tknz(text string) ([]string, *StateFnDigest) {
 			if digest.LastTokenType != T_WORD {
 				digest.TokenCount++
 				digest.Tokens = append(digest.Tokens, string(t.Bytes()))
+				digest.TokenBytes = t.Bytes()
 			}
 			digest.EmptyLine = false
 		case T_PUNCT:
 			digest.PunctCount++
 			digest.Punct = append(digest.Punct, string(t.Bytes()))
+			digest.TokenBytes = t.Bytes()
 			digest.EmptyLine = false
 		case T_NEWLINE:
 			digest.LineCount++

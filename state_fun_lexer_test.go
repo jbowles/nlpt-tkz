@@ -6,21 +6,18 @@ import (
 
 func BenchmarkStateFnTknzGoodStr(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		var sdigestone = NewStateFnDigest()
-		sdigestone.Tknz(ThoreauTwo)
+		TknzStateFun(ThoreauOne, NewStateFnDigest())
 	}
 }
 
 func BenchmarkStateFnTknzBadStr(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		var sdigesttwo = NewStateFnDigest()
-		sdigesttwo.Tknz(BadStr)
+		TknzStateFun(ThoreauOne, NewStateFnDigest())
 	}
 }
 
 func TestStateFnGoodStr(t *testing.T) {
-	var sdigest = NewStateFnDigest()
-	_, lxd := sdigest.Tknz(ThoreauOne)
+	_, lxd := TknzStateFun(ThoreauOne, NewStateFnDigest())
 
 	if lxd.TokenCount != 44 {
 		t.Log("Expected word count to be 44, but got", lxd.TokenCount)

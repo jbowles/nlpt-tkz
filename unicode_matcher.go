@@ -18,18 +18,9 @@ import (
 	"unicode"
 )
 
-type UnicodeMatchDigest struct {
-	Letter []string
-	Title  []string
-	Number []string
-	Punct  []string
-	Space  []string
-	Symbol []string
-}
-
 //NewStateFunDigest initializes a new BucketDigest and explicitly allocates a length and cap on all stirng slices.
-func NewUnicodeMatchDigest() *UnicodeMatchDigest {
-	return &UnicodeMatchDigest{
+func NewUnicodeMatchDigest() *Digest {
+	return &Digest{
 		Letter: make([]string, 0, 0),
 		Title:  make([]string, 0, 0),
 		Number: make([]string, 0, 0),
@@ -43,7 +34,7 @@ func NewUnicodeMatchDigest() *UnicodeMatchDigest {
 //Caution should be used, however, as there is a great amount of information loss too. Date sequences, monetary sequences, urls, or any other complex combination of unicode sequences will be bucketized.
 //One use of this tokenizer is to clean up naoisy data or for post-processing of already tokenized data for specific data-mining tasks. This is not a typical tokenizer. If you want basic tokenization see the Whist (whitespace), Lext (lexical scanner), Punkt (sentence segmenter) tokenizers.
 
-func (digest *UnicodeMatchDigest) Tknz(text string) ([]string, *UnicodeMatchDigest) {
+func TknzUnicode(text string, digest *Digest) ([]string, *Digest) {
 	for _, v := range text {
 		switch true {
 		case unicode.IsTitle(v):
@@ -60,6 +51,6 @@ func (digest *UnicodeMatchDigest) Tknz(text string) ([]string, *UnicodeMatchDige
 			digest.Symbol = append(digest.Symbol, string(v))
 		}
 	}
-	tokens := strings.Split(strings.Join(digest.Letter, ""), ", ")
-	return tokens, digest
+	digest.Tokens = strings.Split(strings.Join(digest.Letter, ""), ", ")
+	return digest.Tokens, digest
 }

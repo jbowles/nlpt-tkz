@@ -8,15 +8,9 @@ package nlpt_tkz
 
 import "strings"
 
-type WhiteSpaceDigest struct {
-	Tokens     []string
-	SpaceCount int
-	CharCount  int
-}
-
 //NewWhiteSpaceDigest intitializes a digest for white space tokenization.
-func NewWhiteSpaceDigest() *WhiteSpaceDigest {
-	return &WhiteSpaceDigest{
+func NewWhiteSpaceDigest() *Digest {
+	return &Digest{
 		Tokens:     make([]string, 0, 0),
 		CharCount:  0,
 		SpaceCount: 0,
@@ -24,7 +18,7 @@ func NewWhiteSpaceDigest() *WhiteSpaceDigest {
 }
 
 //Tknz implements the Tokenizer interface. This uses the strings package Split() with a white space separator as well as collecting some other metadata for the digest.
-func (digest *WhiteSpaceDigest) Tknz(text string) ([]string, *WhiteSpaceDigest) {
+func TknzWhiteSpace(text string, digest *Digest) ([]string, *Digest) {
 	digest.Tokens = strings.Split(text, " ")
 	digest.SpaceCount = strings.Count(text, " ")
 	digest.CharCount = len(text)
