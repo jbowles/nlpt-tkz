@@ -8,6 +8,7 @@ import "github.com/jbowles/go_lexer"
 type Digest struct {
 	Tokens        []string
 	TokenBytes    map[string][]byte
+	Bytes         []byte
 	SpaceCount    int
 	CharCount     int
 	Letter        []string
@@ -38,4 +39,11 @@ func Tokenize(text, typ string) (tokens []string, digest *Digest) {
 		panic("Tokenizer type not supported")
 	}
 	return
+}
+
+func ConcatByteSlice(slice1, slice2 []byte) []byte {
+	new_slice := make([]byte, len(slice1)+len(slice2))
+	copy(new_slice, slice1)
+	copy(new_slice[len(slice1):], slice2)
+	return new_slice
 }

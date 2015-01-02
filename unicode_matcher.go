@@ -39,16 +39,28 @@ func TknzUnicode(text string, digest *Digest) ([]string, *Digest) {
 		switch true {
 		case unicode.IsTitle(v):
 			digest.Title = append(digest.Title, string(v))
+			digest.TokenBytes[string(v)] = []byte(string(v))
+			digest.Bytes = []byte(string(v))
 		case unicode.IsLetter(v):
 			digest.Letter = append(digest.Letter, string(v))
+			//digest.TokenBytes[string(v)] = []byte(string(v))
+			digest.Bytes = []byte(string(v))
 		case unicode.IsSpace(v):
 			digest.Letter = append(digest.Letter, ", ")
+			//digest.TokenBytes[", "] = []byte(string(v))
+			digest.Bytes = []byte(string(v))
 		case unicode.IsNumber(v):
 			digest.Number = append(digest.Number, string(v))
+			//digest.TokenBytes[string(v)] = []byte(string(v))
+			digest.Bytes = []byte(string(v))
 		case unicode.IsPunct(v):
 			digest.Punct = append(digest.Punct, string(v))
+			//digest.TokenBytes[string(v)] = []byte(string(v))
+			digest.Bytes = []byte(string(v))
 		case unicode.IsSymbol(v):
 			digest.Symbol = append(digest.Symbol, string(v))
+			//digest.TokenBytes[string(v)] = []byte(string(v))
+			digest.Bytes = []byte(string(v))
 		}
 	}
 	digest.Tokens = strings.Split(strings.Join(digest.Letter, ""), ", ")
