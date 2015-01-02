@@ -42,7 +42,7 @@ func NewStateFnDigest() *Digest {
 		CharCount:     0,
 		EmptyLine:     true,
 		Tokens:        make([]string, 0, 0),
-		TokenBytes:    make([]byte, 0, 0),
+		TokenBytes:    make(map[string][]byte),
 		Punct:         make([]string, 0, 0),
 		LastTokenType: T_NIL,
 	}
@@ -60,13 +60,13 @@ func TknzStateFun(text string, digest *Digest) ([]string, *Digest) {
 			if digest.LastTokenType != T_WORD {
 				digest.TokenCount++
 				digest.Tokens = append(digest.Tokens, string(t.Bytes()))
-				digest.TokenBytes = t.Bytes()
+				digest.TokenBytes[string(t.Bytes())] = t.Bytes()
 			}
 			digest.EmptyLine = false
 		case T_PUNCT:
 			digest.PunctCount++
 			digest.Punct = append(digest.Punct, string(t.Bytes()))
-			digest.TokenBytes = t.Bytes()
+			digest.TokenBytes[string(t.Bytes())] = t.Bytes()
 			digest.EmptyLine = false
 		case T_NEWLINE:
 			digest.LineCount++

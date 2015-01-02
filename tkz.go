@@ -7,7 +7,7 @@ import "github.com/jbowles/go_lexer"
 
 type Digest struct {
 	Tokens        []string
-	TokenBytes    []byte
+	TokenBytes    map[string][]byte
 	SpaceCount    int
 	CharCount     int
 	Letter        []string

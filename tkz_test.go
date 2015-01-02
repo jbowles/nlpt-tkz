@@ -31,7 +31,7 @@ func TestTokenizeLexOption(t *testing.T) {
 	tokens, digest := Tokenize(ThoreauThree, "lex")
 	//fmt.Printf("Tokens = %v\n DigestType = %T\n", tokens, digest)
 	//fmt.Printf("DIGEST %v", digest)
-	fmt.Printf("bytes %v\n", string(digest.TokenBytes))
+	fmt.Printf("bytes %v\n", digest.TokenBytes)
 
 	if len(tokens) != 19 {
 		t.Log("Expected thoreauThree to be length=19, got=", len(tokens))
