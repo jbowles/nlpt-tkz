@@ -7,7 +7,7 @@ import (
 func BenchmarkWhiteSpaceTknzGoodStr(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		var wsdigestone = NewWhiteSpaceDigest()
-		wsdigestone.Tknz(ThoreauThree)
+		wsdigestone.Tknz(ThoreauOne)
 	}
 }
 

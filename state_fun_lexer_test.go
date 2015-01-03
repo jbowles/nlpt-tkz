@@ -7,7 +7,7 @@ import (
 func BenchmarkStateFnTknzGoodStr(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		var sdigestone = NewStateFnDigest()
-		sdigestone.Tknz(ThoreauTwo)
+		sdigestone.Tknz(ThoreauOne)
 	}
 }
 

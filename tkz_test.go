@@ -11,19 +11,19 @@ BENCHMARKS: go test -bench=.
 
 func BenchmarkLex(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		Tokenize("lex", ThoreauThree)
+		Tokenize("lex", ThoreauOne)
 	}
 }
 
 func BenchmarkBukt(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		Tokenize("bukt", ThoreauThree)
+		Tokenize("bukt", ThoreauOne)
 	}
 }
 
 func BenchmarkSpace(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		Tokenize("space", ThoreauThree)
+		Tokenize("space", ThoreauOne)
 	}
 }
 
