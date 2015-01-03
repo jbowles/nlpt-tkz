@@ -1,16 +1,78 @@
 # nlpt_tkz
 Natural language tokenizer; supports many types of tokenizer including a simple white space tokenizer, a unicode pattern-matcher tokenizer, and state function tokenizing lexer.
 
+There are 2 toplevel functions: `TokenizeStr(string, string) []string *Digest` and `TokenizeBytes([]byte, string) *Digest`. Both functions require you to select which tokenizer type to be used (the second argument). The `TokenizeBytes` function only supports `lex` and 'uicode` options and will only return a `Digest` struct with a `Bytes` field; it is for use in instances where dealing with strings in not preferred. The former function is for dealing direclty with strings and supports `lex`, `unicode`, `whitespace`; it returns a slice of tokens as well as digest, and depending on the tokenizer used the digest will contain different data fields.
+
 ## Get it
 
 ```sh
-go get 
+go get github.com/jbowles/nlpt_tkz
 ```
 
 ## Use it
 
 ```go
+package main
+
+import (
+	"fmt"
+	tkz "github.com/jbowles/nlpt_tkz"
+)
+
+func main() {
+	s := "From: mathew <mathew@mantis.co.uk> \nSubject: Alt.Atheism FAQ: Atheist Resources\n\nArchive-name: atheism/resources\nAlt-atheism-archive-name: resources\nLast-modified: 11 December 1992\nVersion: 1.0"
+	b := []byte(s)
+	digest1 := tkz.TokenizeBytes(b, "lex")
+	digest2 := tkz.TokenizeBytes(b, "unicode")
+	_, digest3 := tkz.TokenizeStr(s, "lex")
+	_, digest4 := tkz.TokenizeStr(s, "unicode")
+	_, digest5 := tkz.TokenizeStr(s, "whitespace")
+
+	fmt.Printf("-----printed digest-----")
+	fmt.Printf("\n\n")
+	fmt.Printf("LexBytes \n %+v\n\n", digest1)
+	fmt.Printf("UnicodeBytes \n %+v\n\n", digest2)
+	fmt.Printf("LexStr \n %+v\n\n", digest3)
+	fmt.Printf("UnicodeStr \n %+v\n\n", digest4)
+	fmt.Printf("WhitespaceStr \n %+v\n\n", digest5)
+	fmt.Printf("---------------------")
+	fmt.Printf("\n\n\n")
+	fmt.Printf("-----printed bytes-----")
+	fmt.Printf("\n\n")
+
+	fmt.Printf("++++++ LexBytes Printed +++++++ \n\n %s\n", digest1.Bytes)
+	fmt.Printf("\n\n")
+	fmt.Printf("+++++ UnicodeBytes Printed ++++++ \n\n %s\n", digest2.Bytes)
+}
 ```
+
+## Tokenizers so far...
+The white space tokenizer is merely a wrapper around `strings.Split(" ")` with some digest content for counts of tokens and such.
+
+The `lex` (technically a State Function Lexer) and `unicode` (technically using go's `unicode` package for matching unicode code points) will return very differnt tokens. The rule of thumb is that if you just need "words" and have a text that is pretty clean use `unicode`; it is the fastest of the two.
+
+### Example output of lex and unicode bytes parsers
+An excerpt from a corpus of news and emails shows differences between the two tokenizers in parsing the email headers.
+##### Original text
+
+```sh
+From: mathew <mathew@mantis.co.uk>
+Subject: Alt.Atheism FAQ: Atheist Resources
+
+Archive-name: atheism/resources
+Alt-atheism-archive-name: resources
+Last-modified: 11 December 1992
+Version: 1.0
+```
+#### lex
+
+```sh
+From: mathew <mathew@mantis.co.uk>Subject: Alt.Atheism FAQ: Atheist ResourcesArchive-name: atheism/resourcesAlt-atheism-archive-name: resourcesLast-modified: 11 December 1992Version: 1.0
+```
+
+#### unicode
+From mathew mathewmantiscoukSubject AltAtheism FAQ Atheist ResourcesArchivename atheismresourcesAltatheismarchivename resourcesLastmodified 11 December 1992Version 10
+
 
 ## Benchmarks
 On old `master` branch:
