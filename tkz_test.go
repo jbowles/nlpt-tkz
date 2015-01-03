@@ -125,7 +125,7 @@ func TestTokenizeUnicodeMatchOptionForBytes(t *testing.T) {
 	//fmt.Printf("UNI bytes %v\n", digest.Bytes)
 	//fmt.Printf("UNI bytes stringified %v\n", string(digest.Bytes))
 
-	if len(digest.Bytes) != 96 {
+	if len(digest.Bytes) != 95 {
 		t.Log("Expected ththreeeByte to be length=96, got=", len(digest.Bytes))
 		t.Fail()
 	}

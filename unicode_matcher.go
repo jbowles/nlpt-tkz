@@ -14,6 +14,7 @@
 package nlpt_tkz
 
 import (
+	"bytes"
 	"strings"
 	"unicode"
 )
@@ -32,6 +33,12 @@ func NewUnicodeMatchDigest() *Digest {
 	}
 }
 
+func NewUnicodeMatchDigestBytes() *Digest {
+	return &Digest{
+		Bytes: make([]byte, 0, 0),
+	}
+}
+
 //Tknz implements Tokenizer interface. Here it uses Unicode package to match runes for tokenization. It can be useful for really noisy data sets. For example, a sequence like 'expect0.7rant7!' will be tokenized into 3 buckets of LETTER: 'expectrant', NUMBER: '0 7 7', and PUNCT: '. !'.
 //Caution should be used, however, as there is a great amount of information loss too. Date sequences, monetary sequences, urls, or any other complex combination of unicode sequences will be bucketized.
 //One use of this tokenizer is to clean up naoisy data or for post-processing of already tokenized data for specific data-mining tasks. This is not a typical tokenizer. If you want basic tokenization see the Whist (whitespace), Lext (lexical scanner), Punkt (sentence segmenter) tokenizers.
@@ -41,6 +48,7 @@ func TknzUnicode(text string, digest *Digest) ([]string, *Digest) {
 		switch true {
 		case unicode.IsTitle(v):
 			digest.Title = append(digest.Title, string(v))
+			digest.Letter = append(digest.Letter, string(v))
 		case unicode.IsLetter(v):
 			digest.Letter = append(digest.Letter, string(v))
 		case unicode.IsSpace(v):
@@ -58,41 +66,20 @@ func TknzUnicode(text string, digest *Digest) ([]string, *Digest) {
 }
 
 func TknzUnicodeBytes(byteSeq []byte, digest *Digest) *Digest {
+	bufferCache := new(bytes.Buffer)
 	for _, b := range byteSeq {
 		runeBytes := rune(b)
-		stringedBytes := string(b)
-		//lexBytesPadded := append([]byte{b}, BytesSpacePadding)
 		switch true {
 		case unicode.IsTitle(runeBytes):
-			digest.Title = append(digest.Title, stringedBytes)
-			//digest.TokenBytes[stringedBytes] = []byte{b}
-			//digest.Bytes = ConcatByteSlice(digest.Bytes, lexBytesPadded)
+			bufferCache.Write([]byte{b})
 		case unicode.IsLetter(runeBytes):
-			digest.Letter = append(digest.Letter, stringedBytes)
-			//digest.TokenBytes[stringedBytes] = []byte{b}
-			//digest.Bytes = ConcatByteSlice(digest.Bytes, lexBytesPadded)
+			bufferCache.Write([]byte{b})
 		case unicode.IsSpace(runeBytes):
-			digest.Letter = append(digest.Letter, ", ")
-			//digest.Bytes = ConcatByteSlice(digest.Bytes, lexBytesPadded)
-			//digest.TokenBytes[stringedBytes] = []byte{b}
+			bufferCache.Write([]byte{b})
 		case unicode.IsNumber(runeBytes):
-			digest.Number = append(digest.Number, stringedBytes)
-			//digest.TokenBytes[stringedBytes] = []byte{b}
-			//digest.Bytes = ConcatByteSlice(digest.Bytes, lexBytesPadded)
-		case unicode.IsPunct(runeBytes):
-			digest.Punct = append(digest.Punct, stringedBytes)
-			//digest.TokenBytes[stringedBytes] = []byte{b}
-			//digest.Bytes = ConcatByteSlice(digest.Bytes, lexBytesPadded)
-		case unicode.IsSymbol(runeBytes):
-			digest.Symbol = append(digest.Symbol, stringedBytes)
-			//digest.TokenBytes[stringedBytes] = []byte{b}
-			//digest.Bytes = ConcatByteSlice(digest.Bytes, lexBytesPadded)
+			bufferCache.Write([]byte{b})
 		}
 	}
-	digest.Tokens = strings.Split(strings.Join(digest.Letter, ""), ", ")
-	for _, t := range digest.Tokens {
-		digest.Bytes = ConcatByteSlice(digest.Bytes, []byte(t+" "))
-		digest.TokenBytes[t] = []byte(t)
-	}
+	digest.Bytes = bufferCache.Bytes()
 	return digest
 }

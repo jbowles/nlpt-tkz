@@ -32,24 +32,13 @@ func BenchmarkUncdMatchTnkzBytesBadStr(b *testing.B) {
 func TestTknzUnicodeBytes(t *testing.T) {
 	b := []byte(ThoreauThree)
 	digest := TknzUnicodeBytes(b, NewUnicodeMatchDigest())
-	//fmt.Printf("UNI token bytes %v\n", digest.TokenBytes)
-	//fmt.Printf("UNI bytes %v\n", digest.Bytes)
-	//fmt.Printf("UNI bytes stringified %v\n", string(digest.Bytes))
+	fmt.Printf("UNI bytes %v\n", digest.Bytes)
+	fmt.Printf("UNI bytes stringified %v\n", string(digest.Bytes))
 
-	if len(digest.Tokens) != 19 {
-		t.Log("Expected thoreauThree to be length=19, got=", len(digest.Tokens))
+	if len(digest.Bytes) != 95 {
+		t.Log("Expected digest.Bytes to be length=95, got=", len(digest.TokenBytes))
 		t.Fail()
 	}
-	/*
-		if len(digest.TokenBytes) != 19 {
-			t.Log("Expected thoreauThree to be length=19, got=", len(digest.TokenBytes))
-			t.Fail()
-		}
-			if len(digest.Bytes) != 19 {
-				t.Log("Expected thoreauThree to be length=19, got=", len(digest.Tokens))
-				t.Fail()
-			}
-	*/
 
 	typ := fmt.Sprintf("%T", digest)
 	if typ != "*nlpt_tkz.Digest" {
