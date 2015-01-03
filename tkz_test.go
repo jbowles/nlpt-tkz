@@ -45,11 +45,26 @@ func TestTokenizeLexOption(t *testing.T) {
 	}
 }
 
+func TestTokenizeLexOptionForBytes(t *testing.T) {
+	tokens, digest := Tokenize(ThoreauThree, "lex")
+	fmt.Printf("LEX token bytes %v\n", digest.TokenBytes)
+	fmt.Printf("LEX bytes %v\n", digest.Bytes)
+	fmt.Printf("LEX bytes %v\n", string(digest.Bytes))
+
+	if len(tokens) != 19 {
+		t.Log("Expected thoreauThree to be length=19, got=", len(tokens))
+		t.Fail()
+	}
+
+	typ := fmt.Sprintf("%T", digest)
+	if typ != "*nlpt_tkz.Digest" {
+		t.Log("Expected digest to be *nlpt_tkz.StateFnDigest", typ)
+		t.Fail()
+	}
+}
+
 func TestTokenizeUnicodeMatchOption(t *testing.T) {
 	tokens, digest := Tokenize(ThoreauThree, "unicode")
-	fmt.Printf("UNI token bytes %v\n", digest.TokenBytes)
-	fmt.Printf("UNI bytes %v\n", digest.Bytes)
-	fmt.Printf("UNI bytes %v\n", string(digest.Bytes))
 
 	if len(tokens) != 19 {
 		t.Log("Expected thoreauThree to be length=19, got=", len(tokens))
