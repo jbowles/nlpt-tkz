@@ -51,7 +51,7 @@ func TokenizeBytes(textBytes []byte, typ string) (digest *Digest) {
 
 	switch typ {
 	case "lex":
-		digest = TknzStateFunBytes(textBytes, NewStateFnDigest())
+		digest = TknzStateFunBytes(textBytes, NewStateFnDigestBytes())
 	case "unicode":
 		digest = TknzUnicodeBytes(textBytes, NewUnicodeMatchDigest())
 	default:
@@ -60,6 +60,7 @@ func TokenizeBytes(textBytes []byte, typ string) (digest *Digest) {
 	return
 }
 
+// TODO this is the bottleneck for the bytes functions... we have to copy many slices of bytes and concatenate them. Fix this.
 func ConcatByteSlice(slice1, slice2 []byte) []byte {
 	new_slice := make([]byte, len(slice1)+len(slice2))
 	copy(new_slice, slice1)

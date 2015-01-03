@@ -9,33 +9,63 @@ import (
 BENCHMARKS: go test -bench=.
 */
 
-func BenchmarkLexStr(b *testing.B) {
+func BenchmarkLexStrGood(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		TokenizeStr(ThoreauThree, "lex")
+		TokenizeStr(ThoreauOne, "lex")
 	}
 }
 
-func BenchmarkUnicodeStr(b *testing.B) {
+func BenchmarkUnicodeStrGood(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		TokenizeStr(ThoreauThree, "unicode")
+		TokenizeStr(ThoreauOne, "unicode")
 	}
 }
 
-func BenchmarkWhitespaceStr(b *testing.B) {
+func BenchmarkWhitespaceStrGood(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		TokenizeStr(ThoreauThree, "whitespace")
+		TokenizeStr(ThoreauOne, "whitespace")
 	}
 }
 
-func BenchmarkLexBytes(b *testing.B) {
+func BenchmarkLexBytesGood(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		TokenizeBytes(ththreeeByte, "lex")
+		TokenizeBytes(thoneByte, "lex")
 	}
 }
 
-func BenchmarkUnicodeBytes(b *testing.B) {
+func BenchmarkUnicodeBytesGood(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		TokenizeBytes(ththreeeByte, "unicode")
+		TokenizeBytes(thoneByte, "unicode")
+	}
+}
+
+func BenchmarkLexStrBad(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		TokenizeStr(BadStr, "lex")
+	}
+}
+
+func BenchmarkUnicodeStrBad(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		TokenizeStr(BadStr, "unicode")
+	}
+}
+
+func BenchmarkWhitespaceStrBad(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		TokenizeStr(BadStr, "whitespace")
+	}
+}
+
+func BenchmarkLexBytesBad(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		TokenizeBytes(badstrByte, "lex")
+	}
+}
+
+func BenchmarkUnicodeBytesBad(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		TokenizeBytes(badstrByte, "unicode")
 	}
 }
 
