@@ -28,9 +28,9 @@ type Digest struct {
 	LastTokenType lexer.TokenType
 }
 
-//Tokenize is a top-level function to delegate Tokenizer implementation of Tknz().
-//It creates an abstraction around all the tokenizer implementations for a simple API, facilitating an easy call from the client and for binary installations (i.e., tokens, digest := Tokenize("lext", "Simple sentence")).
-func Tokenize(text, typ string) (tokens []string, digest *Digest) {
+//TokenizeStr is a top-level function to choose tokenizer types: TknzStateFun, TknzUnicode, TknzWhiteSpace.
+//It creates an abstraction around all the tokenizer implementations for a simple API, facilitating an easy call from the client and for binary installations.
+func TokenizeStr(text, typ string) (tokens []string, digest *Digest) {
 
 	switch typ {
 	case "lex":
@@ -39,6 +39,21 @@ func Tokenize(text, typ string) (tokens []string, digest *Digest) {
 		tokens, digest = TknzUnicode(text, NewUnicodeMatchDigest())
 	case "whitespace":
 		tokens, digest = TknzWhiteSpace(text, NewWhiteSpaceDigest())
+	default:
+		panic("Tokenizer type not supported")
+	}
+	return
+}
+
+//TokenizeBytes is a top-level function to choose tokenizer types: TknzStateFunBytes, TknzUnicodeBytes.
+//It creates an abstraction around tokenizer implementations that accept byte slices for a simple API, facilitating an easy call from the client and for binary installations.
+func TokenizeBytes(textBytes []byte, typ string) (digest *Digest) {
+
+	switch typ {
+	case "lex":
+		digest = TknzStateFunBytes(textBytes, NewStateFnDigest())
+	case "unicode":
+		digest = TknzUnicodeBytes(textBytes, NewUnicodeMatchDigest())
 	default:
 		panic("Tokenizer type not supported")
 	}

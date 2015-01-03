@@ -12,7 +12,18 @@ func BenchmarkStateFnTknzGoodStr(b *testing.B) {
 
 func BenchmarkStateFnTknzBadStr(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		TknzStateFun(ThoreauOne, NewStateFnDigest())
+		TknzStateFun(BadStr, NewStateFnDigest())
+	}
+}
+func BenchmarkStateFnTknzBytesGoodStr(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		TknzStateFunBytes(thoneByte, NewStateFnDigest())
+	}
+}
+
+func BenchmarkStateFnTknzBytesBadStr(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		TknzStateFunBytes(badstrByte, NewStateFnDigest())
 	}
 }
 

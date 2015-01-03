@@ -13,3 +13,7 @@ const (
 	//19 words
 	ThoreauThree = "What lies behind us and what lies ahead of us are tiny matters compared to what lives within us."
 )
+
+var thoneByte = []byte(ThoreauOne)
+var ththreeeByte = []byte(ThoreauThree)
+var badstrByte = []byte(BadStr)

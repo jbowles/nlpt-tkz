@@ -16,12 +16,25 @@ func BenchmarkUncdMatchTnkzBadStr(b *testing.B) {
 		TknzUnicode(BadStr, NewUnicodeMatchDigest())
 	}
 }
+
+func BenchmarkUncdMatchTknzBytesGoodStr(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		TknzUnicodeBytes(thoneByte, NewUnicodeMatchDigest())
+	}
+}
+
+func BenchmarkUncdMatchTnkzBytesBadStr(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		TknzUnicodeBytes(badstrByte, NewUnicodeMatchDigest())
+	}
+}
+
 func TestTknzUnicodeBytes(t *testing.T) {
 	b := []byte(ThoreauThree)
 	digest := TknzUnicodeBytes(b, NewUnicodeMatchDigest())
-	fmt.Printf("UNI token bytes %v\n", digest.TokenBytes)
-	fmt.Printf("UNI bytes %v\n", digest.Bytes)
-	fmt.Printf("UNI bytes stringified %v\n", string(digest.Bytes))
+	//fmt.Printf("UNI token bytes %v\n", digest.TokenBytes)
+	//fmt.Printf("UNI bytes %v\n", digest.Bytes)
+	//fmt.Printf("UNI bytes stringified %v\n", string(digest.Bytes))
 
 	if len(digest.Tokens) != 19 {
 		t.Log("Expected thoreauThree to be length=19, got=", len(digest.Tokens))
