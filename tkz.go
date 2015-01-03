@@ -41,12 +41,8 @@ func Tokenize(text, typ string) (tokens []string, digest *Digest) {
 	return
 }
 
-// ConcatByteSlice copy slice 2 into a slice 1 and returns a new slice.
-// Used in cases where 'append' will not work. Also, want to pad the new slice
-// with a space (' ') so that Digest.Bytes has padding between the concatenated bytes.
 func ConcatByteSlice(slice1, slice2 []byte) []byte {
 	new_slice := make([]byte, len(slice1)+len(slice2))
-	//new_slice := []byte{32}
 	copy(new_slice, slice1)
 	copy(new_slice[len(slice1):], slice2)
 	return new_slice

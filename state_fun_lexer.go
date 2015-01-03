@@ -42,6 +42,7 @@ func NewStateFnDigest() *Digest {
 		CharCount:     0,
 		EmptyLine:     true,
 		Tokens:        make([]string, 0, 0),
+		Bytes:         make([]byte, 0, 0),
 		TokenBytes:    make(map[string][]byte),
 		Punct:         make([]string, 0, 0),
 		LastTokenType: T_NIL,
