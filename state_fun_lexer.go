@@ -51,16 +51,7 @@ func NewStateFnDigest() *Digest {
 
 func NewStateFnDigestBytes() *Digest {
 	return &Digest{
-		//TokenCount: 0,
-		//PunctCount: 0,
-		//SpaceCount: 0,
-		//LineCount:  0,
-		//CharCount:  0,
-		//EmptyLine:  true,
-		Tokens: make([]string, 0, 0),
-		Bytes:  make([]byte, 0, 0),
-		//TokenBytes:    make(map[string][]byte),
-		//Punct:         make([]string, 0, 0),
+		Bytes:         make([]byte, 0, 0),
 		LastTokenType: T_NIL,
 	}
 }
@@ -102,29 +93,30 @@ func TknzStateFun(text string, digest *Digest) ([]string, *Digest) {
 		lexBytes := t.Bytes()
 		digest.CharCount += len(lexBytes)
 		stringedBytes := string(lexBytes)
-		lexBytesPadded := append(lexBytes, BytesSpacePadding)
 		switch t.Type() {
 		case T_WORD:
 			if digest.LastTokenType != T_WORD {
 				digest.TokenCount++
 				digest.Tokens = append(digest.Tokens, stringedBytes)
 				digest.TokenBytes[stringedBytes] = lexBytes
-				digest.Bytes = ConcatByteSlice(digest.Bytes, lexBytesPadded)
+				digest.Bytes = ConcatByteSlice(digest.Bytes, lexBytes)
 			}
 			digest.EmptyLine = false
 		case T_PUNCT:
 			digest.PunctCount++
 			digest.Punct = append(digest.Punct, stringedBytes)
 			digest.TokenBytes[string(lexBytes)] = lexBytes
-			digest.Bytes = ConcatByteSlice(digest.Bytes, lexBytesPadded)
+			digest.Bytes = ConcatByteSlice(digest.Bytes, lexBytes)
 			digest.EmptyLine = false
 		case T_NEWLINE:
 			digest.LineCount++
 			digest.SpaceCount++
 			digest.EmptyLine = true
+			digest.Bytes = ConcatByteSlice(digest.Bytes, lexBytes)
 		case T_SPACE:
 			digest.SpaceCount += len(t.Bytes())
 			digest.EmptyLine = false
+			digest.Bytes = ConcatByteSlice(digest.Bytes, lexBytes)
 		default:
 			panic("unreachable")
 		}

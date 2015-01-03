@@ -91,7 +91,7 @@ func TknzUnicodeBytes(byteSeq []byte, digest *Digest) *Digest {
 	}
 	digest.Tokens = strings.Split(strings.Join(digest.Letter, ""), ", ")
 	for _, t := range digest.Tokens {
-		digest.Bytes = ConcatByteSlice(digest.Bytes, []byte(t+"\n"))
+		digest.Bytes = ConcatByteSlice(digest.Bytes, []byte(t+" "))
 		digest.TokenBytes[t] = []byte(t)
 	}
 	return digest

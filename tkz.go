@@ -5,10 +5,6 @@ package nlpt_tkz
 
 import "github.com/jbowles/go_lexer"
 
-const (
-	BytesSpacePadding = byte('\n')
-)
-
 type Digest struct {
 	Tokens        []string
 	TokenBytes    map[string][]byte

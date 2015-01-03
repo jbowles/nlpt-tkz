@@ -75,8 +75,23 @@ func TestTokenizeLexOption(t *testing.T) {
 	//fmt.Printf("LEX bytes %v\n", digest.Bytes)
 	//fmt.Printf("LEX bytes stringified %v\n", string(digest.Bytes))
 
+	if len(digest.Bytes) != 96 {
+		t.Log("Expected digets.Bytes to be length=96, got=", len(digest.Bytes))
+		t.Fail()
+	}
+
+	if digest.CharCount != len(digest.Bytes) {
+		t.Log("Expected digest.CharCount == len(digest.Bytes)", digest.CharCount)
+		t.Fail()
+	}
+
 	if len(tokens) != 19 {
 		t.Log("Expected thoreauThree to be length=19, got=", len(tokens))
+		t.Fail()
+	}
+
+	if digest.TokenCount != len(tokens) {
+		t.Log("Expected lxd.TokenCount == len(tokens), but got", digest.TokenCount)
 		t.Fail()
 	}
 
@@ -89,15 +104,14 @@ func TestTokenizeLexOption(t *testing.T) {
 
 func TestTokenizeLexOptionForBytes(t *testing.T) {
 	digest := TokenizeBytes(ththreeeByte, "lex")
-	fmt.Printf("LEX bytes %v\n", digest.Bytes)
-	fmt.Printf("LEX bytes stringified %v\n", string(digest.Bytes))
+	//byteToString := string(digest.Bytes)
+	//fmt.Printf("LEX bytes %v\n", digest.Bytes)
+	//fmt.Printf("LEX bytes stringified %v\n", byteToString)
 
-	/*
-		if len(tokens) != 19 {
-			t.Log("Expected thoreauThree to be length=19, got=", len(tokens))
-			t.Fail()
-		}
-	*/
+	if len(digest.Bytes) != 96 {
+		t.Log("Expected ththreeeByte to be length=96, got=", len(digest.Bytes))
+		t.Fail()
+	}
 
 	typ := fmt.Sprintf("%T", digest)
 	if typ != "*nlpt_tkz.Digest" {
@@ -106,11 +120,13 @@ func TestTokenizeLexOptionForBytes(t *testing.T) {
 	}
 }
 
-func TestTokenizeUnicodeMatchOption(t *testing.T) {
-	tokens, digest := TokenizeStr(ThoreauThree, "unicode")
+func TestTokenizeUnicodeMatchOptionForBytes(t *testing.T) {
+	digest := TokenizeBytes(ththreeeByte, "unicode")
+	//fmt.Printf("UNI bytes %v\n", digest.Bytes)
+	//fmt.Printf("UNI bytes stringified %v\n", string(digest.Bytes))
 
-	if len(tokens) != 19 {
-		t.Log("Expected thoreauThree to be length=19, got=", len(tokens))
+	if len(digest.Bytes) != 96 {
+		t.Log("Expected ththreeeByte to be length=96, got=", len(digest.Bytes))
 		t.Fail()
 	}
 
