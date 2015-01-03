@@ -32,8 +32,8 @@ func BenchmarkUncdMatchTnkzBytesBadStr(b *testing.B) {
 func TestTknzUnicodeBytes(t *testing.T) {
 	b := []byte(ThoreauThree)
 	digest := TknzUnicodeBytes(b, NewUnicodeMatchDigest())
-	fmt.Printf("UNI bytes %v\n", digest.Bytes)
-	fmt.Printf("UNI bytes stringified %v\n", string(digest.Bytes))
+	//fmt.Printf("UNI bytes %v\n", digest.Bytes)
+	//fmt.Printf("UNI bytes stringified %v\n", string(digest.Bytes))
 
 	if len(digest.Bytes) != 95 {
 		t.Log("Expected digest.Bytes to be length=95, got=", len(digest.TokenBytes))
