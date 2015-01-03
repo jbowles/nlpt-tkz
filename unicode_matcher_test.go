@@ -1,26 +1,54 @@
 package nlpt_tkz
 
 import (
+	"fmt"
 	"testing"
 )
 
 func BenchmarkUncdMatchTknzGoodStr(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		var udigestone = NewUnicodeMatchDigest()
-		udigestone.Tknz(ThoreauOne)
+		TknzUnicode(ThoreauOne, NewUnicodeMatchDigest())
 	}
 }
 
 func BenchmarkUncdMatchTnkzBadStr(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		var udigesttwo = NewUnicodeMatchDigest()
-		udigesttwo.Tknz(BadStr)
+		TknzUnicode(BadStr, NewUnicodeMatchDigest())
+	}
+}
+
+func BenchmarkUncdMatchTknzBytesGoodStr(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		TknzUnicodeBytes(thoneByte, NewUnicodeMatchDigest())
+	}
+}
+
+func BenchmarkUncdMatchTnkzBytesBadStr(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		TknzUnicodeBytes(badstrByte, NewUnicodeMatchDigest())
+	}
+}
+
+func TestTknzUnicodeBytes(t *testing.T) {
+	b := []byte(ThoreauThree)
+	digest := TknzUnicodeBytes(b, NewUnicodeMatchDigest())
+	//fmt.Printf("UNI bytes %v\n", digest.Bytes)
+	//fmt.Printf("UNI bytes stringified %v\n", string(digest.Bytes))
+
+	if len(digest.Bytes) != 95 {
+		t.Log("Expected digest.Bytes to be length=95, got=", len(digest.TokenBytes))
+		t.Fail()
+	}
+
+	typ := fmt.Sprintf("%T", digest)
+	if typ != "*nlpt_tkz.Digest" {
+		t.Log("Expected digest to be *nlpt_tkz.StateFnDigest", typ)
+		t.Fail()
 	}
 }
 
 func TestUncdMatchBadStr(t *testing.T) {
-	var udigest = NewUnicodeMatchDigest()
-	_, digest := udigest.Tknz(BadStr)
+	_, digest := TknzUnicode(BadStr, NewUnicodeMatchDigest())
 	first_symbol := digest.Symbol[0]
 	second_symbol := digest.Symbol[1]
 	test_first_symbol := "<"
@@ -53,8 +81,7 @@ func TestUncdMatchBadStr(t *testing.T) {
 }
 
 func TestBuktUncdMatchBadString(t *testing.T) {
-	var udigest = NewUnicodeMatchDigest()
-	tok, _ := udigest.Tknz(BadStr)
+	tok, _ := TknzUnicode(BadStr, NewUnicodeMatchDigest())
 
 	if len(tok) != 27 {
 		t.Log("Expected BadStr string to be length=25, got=", len(tok))
@@ -63,8 +90,7 @@ func TestBuktUncdMatchBadString(t *testing.T) {
 }
 
 func TestUncdMatchTknzOne(t *testing.T) {
-	var udigest = NewUnicodeMatchDigest()
-	tok1, _ := udigest.Tknz(ThoreauOne)
+	tok1, _ := TknzUnicode(ThoreauOne, NewUnicodeMatchDigest())
 
 	if len(tok1) != 44 {
 		t.Log("Expected thoreauOne string to be length=44, got=", len(tok1))
@@ -73,8 +99,7 @@ func TestUncdMatchTknzOne(t *testing.T) {
 }
 
 func TestUncdMatchTknzTwo(t *testing.T) {
-	var udigest = NewUnicodeMatchDigest()
-	tok2, _ := udigest.Tknz(ThoreauTwo)
+	tok2, _ := TknzUnicode(ThoreauTwo, NewUnicodeMatchDigest())
 
 	if len(tok2) != 30 {
 		t.Log("Expected thoreauTwo string to be length=30", len(tok2))
@@ -83,8 +108,7 @@ func TestUncdMatchTknzTwo(t *testing.T) {
 }
 
 func TestUncdMatchTknzThree(t *testing.T) {
-	var udigest = NewUnicodeMatchDigest()
-	tok3, _ := udigest.Tknz(ThoreauThree)
+	tok3, _ := TknzUnicode(ThoreauThree, NewUnicodeMatchDigest())
 
 	if len(tok3) != 19 {
 		t.Log("Expected thoreauThree string to be lenght=19, got=", len(tok3))

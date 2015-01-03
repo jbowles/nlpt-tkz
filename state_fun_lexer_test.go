@@ -6,24 +6,37 @@ import (
 
 func BenchmarkStateFnTknzGoodStr(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		var sdigestone = NewStateFnDigest()
-		sdigestone.Tknz(ThoreauOne)
+		TknzStateFun(ThoreauOne, NewStateFnDigest())
 	}
 }
 
 func BenchmarkStateFnTknzBadStr(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		var sdigesttwo = NewStateFnDigest()
-		sdigesttwo.Tknz(BadStr)
+		TknzStateFun(BadStr, NewStateFnDigest())
+	}
+}
+func BenchmarkStateFnTknzBytesGoodStr(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		TknzStateFunBytes(thoneByte, NewStateFnDigestBytes())
+	}
+}
+
+func BenchmarkStateFnTknzBytesBadStr(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		TknzStateFunBytes(badstrByte, NewStateFnDigestBytes())
 	}
 }
 
 func TestStateFnGoodStr(t *testing.T) {
-	var sdigest = NewStateFnDigest()
-	_, lxd := sdigest.Tknz(ThoreauOne)
+	tokens, lxd := TknzStateFun(ThoreauOne, NewStateFnDigest())
 
 	if lxd.TokenCount != 44 {
 		t.Log("Expected word count to be 44, but got", lxd.TokenCount)
+		t.Fail()
+	}
+
+	if len(tokens) != lxd.TokenCount {
+		t.Log("Expected tokens == lxd.TokenCount, but got", len(tokens))
 		t.Fail()
 	}
 

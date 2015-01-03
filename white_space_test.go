@@ -6,21 +6,18 @@ import (
 
 func BenchmarkWhiteSpaceTknzGoodStr(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		var wsdigestone = NewWhiteSpaceDigest()
-		wsdigestone.Tknz(ThoreauOne)
+		TknzWhiteSpace(ThoreauThree, NewWhiteSpaceDigest())
 	}
 }
 
 func BenchmarkWhiteSpaceTknzBadStr(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		var wsdigesttwo = NewWhiteSpaceDigest()
-		wsdigesttwo.Tknz(BadStr)
+		TknzWhiteSpace(BadStr, NewWhiteSpaceDigest())
 	}
 }
 
 func TestWhiteSpaceTknz(t *testing.T) {
-	var wsdigest = NewWhiteSpaceDigest()
-	tok3, digest := wsdigest.Tknz(ThoreauThree)
+	tok3, digest := TknzWhiteSpace(ThoreauThree, NewWhiteSpaceDigest())
 
 	if len(tok3) != 19 {
 		t.Log("Expected thoreauThree string length=19, got=", len(tok3))
