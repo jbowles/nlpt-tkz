@@ -29,9 +29,9 @@ func BenchmarkSpace(b *testing.B) {
 
 func TestTokenizeLexOption(t *testing.T) {
 	tokens, digest := Tokenize(ThoreauThree, "lex")
-	fmt.Printf("LEX token bytes %v\n", digest.TokenBytes)
-	fmt.Printf("LEX bytes %v\n", digest.Bytes)
-	fmt.Printf("LEX bytes %v\n", string(digest.Bytes))
+	//fmt.Printf("LEX token bytes %v\n", digest.TokenBytes)
+	//fmt.Printf("LEX bytes %v\n", digest.Bytes)
+	//fmt.Printf("LEX bytes stringified %v\n", string(digest.Bytes))
 
 	if len(tokens) != 19 {
 		t.Log("Expected thoreauThree to be length=19, got=", len(tokens))
@@ -47,9 +47,9 @@ func TestTokenizeLexOption(t *testing.T) {
 
 func TestTokenizeLexOptionForBytes(t *testing.T) {
 	tokens, digest := Tokenize(ThoreauThree, "lex")
-	fmt.Printf("LEX token bytes %v\n", digest.TokenBytes)
-	fmt.Printf("LEX bytes %v\n", digest.Bytes)
-	fmt.Printf("LEX bytes %v\n", string(digest.Bytes))
+	//fmt.Printf("LEX token bytes %v\n", digest.TokenBytes)
+	//fmt.Printf("LEX bytes %v\n", digest.Bytes)
+	//fmt.Printf("LEX bytes stringified %v\n", string(digest.Bytes))
 
 	if len(tokens) != 19 {
 		t.Log("Expected thoreauThree to be length=19, got=", len(tokens))

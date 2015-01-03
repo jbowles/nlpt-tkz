@@ -21,12 +21,14 @@ import (
 //NewStateFunDigest initializes a new BucketDigest and explicitly allocates a length and cap on all stirng slices.
 func NewUnicodeMatchDigest() *Digest {
 	return &Digest{
-		Letter: make([]string, 0, 0),
-		Title:  make([]string, 0, 0),
-		Number: make([]string, 0, 0),
-		Punct:  make([]string, 0, 0),
-		Space:  make([]string, 0, 0),
-		Symbol: make([]string, 0, 0),
+		Letter:     make([]string, 0, 0),
+		Title:      make([]string, 0, 0),
+		Number:     make([]string, 0, 0),
+		Punct:      make([]string, 0, 0),
+		Space:      make([]string, 0, 0),
+		Symbol:     make([]string, 0, 0),
+		Bytes:      make([]byte, 0, 0),
+		TokenBytes: make(map[string][]byte),
 	}
 }
 
@@ -53,4 +55,44 @@ func TknzUnicode(text string, digest *Digest) ([]string, *Digest) {
 	}
 	digest.Tokens = strings.Split(strings.Join(digest.Letter, ""), ", ")
 	return digest.Tokens, digest
+}
+
+func TknzUnicodeBytes(byteSeq []byte, digest *Digest) *Digest {
+	for _, b := range byteSeq {
+		runeBytes := rune(b)
+		stringedBytes := string(b)
+		//lexBytesPadded := append([]byte{b}, BytesSpacePadding)
+		switch true {
+		case unicode.IsTitle(runeBytes):
+			digest.Title = append(digest.Title, stringedBytes)
+			//digest.TokenBytes[stringedBytes] = []byte{b}
+			//digest.Bytes = ConcatByteSlice(digest.Bytes, lexBytesPadded)
+		case unicode.IsLetter(runeBytes):
+			digest.Letter = append(digest.Letter, stringedBytes)
+			//digest.TokenBytes[stringedBytes] = []byte{b}
+			//digest.Bytes = ConcatByteSlice(digest.Bytes, lexBytesPadded)
+		case unicode.IsSpace(runeBytes):
+			digest.Letter = append(digest.Letter, ", ")
+			//digest.Bytes = ConcatByteSlice(digest.Bytes, lexBytesPadded)
+			//digest.TokenBytes[stringedBytes] = []byte{b}
+		case unicode.IsNumber(runeBytes):
+			digest.Number = append(digest.Number, stringedBytes)
+			//digest.TokenBytes[stringedBytes] = []byte{b}
+			//digest.Bytes = ConcatByteSlice(digest.Bytes, lexBytesPadded)
+		case unicode.IsPunct(runeBytes):
+			digest.Punct = append(digest.Punct, stringedBytes)
+			//digest.TokenBytes[stringedBytes] = []byte{b}
+			//digest.Bytes = ConcatByteSlice(digest.Bytes, lexBytesPadded)
+		case unicode.IsSymbol(runeBytes):
+			digest.Symbol = append(digest.Symbol, stringedBytes)
+			//digest.TokenBytes[stringedBytes] = []byte{b}
+			//digest.Bytes = ConcatByteSlice(digest.Bytes, lexBytesPadded)
+		}
+	}
+	digest.Tokens = strings.Split(strings.Join(digest.Letter, ""), ", ")
+	for _, t := range digest.Tokens {
+		digest.Bytes = ConcatByteSlice(digest.Bytes, []byte(t+"\n"))
+		digest.TokenBytes[t] = []byte(t)
+	}
+	return digest
 }

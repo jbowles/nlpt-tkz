@@ -29,7 +29,7 @@ const (
 // List gleaned from isspace(3) manpage
 var (
 	bytesNonWord = []byte{' ', '\t', '\f', '\v', '\n', '\r', '.', '?', '!', ':', '\\', '"', ','}
-	bytesPunct   = []byte{'.', '?', '!', ':', '\\', '"', ','}
+	bytesPunct   = []byte{'.', '?', '!', ':', '\\', '"', ',', '(', ')'}
 	bytesSpace   = []byte{' ', '\t', '\f', '\v'}
 )
 
@@ -49,6 +49,51 @@ func NewStateFnDigest() *Digest {
 	}
 }
 
+func TknzStateFunBytes(byteSeq []byte, digest *Digest) *Digest {
+	reader := bytes.NewBuffer(byteSeq)
+	lex := lexer.NewSize(lexFunc, reader, 100, 1)
+
+	// Processing the lexer-emitted tokens
+	for t := lex.NextToken(); lexer.TokenTypeEOF != t.Type(); t = lex.NextToken() {
+		// save some cycles.. allocate variables from Bytes function
+		lexBytes := t.Bytes()
+		digest.CharCount += len(lexBytes)
+		stringedBytes := string(lexBytes)
+		lexBytesPadded := append(lexBytes, BytesSpacePadding)
+		switch t.Type() {
+		case T_WORD:
+			if digest.LastTokenType != T_WORD {
+				digest.TokenCount++
+				digest.Tokens = append(digest.Tokens, stringedBytes)
+				digest.TokenBytes[stringedBytes] = lexBytes
+				digest.Bytes = ConcatByteSlice(digest.Bytes, lexBytesPadded)
+			}
+			digest.EmptyLine = false
+		case T_PUNCT:
+			digest.PunctCount++
+			digest.Punct = append(digest.Punct, stringedBytes)
+			digest.TokenBytes[string(lexBytes)] = lexBytes
+			digest.Bytes = ConcatByteSlice(digest.Bytes, lexBytesPadded)
+			digest.EmptyLine = false
+		case T_NEWLINE:
+			digest.LineCount++
+			digest.SpaceCount++
+			digest.EmptyLine = true
+		case T_SPACE:
+			digest.SpaceCount += len(t.Bytes())
+			digest.EmptyLine = false
+		default:
+			panic("unreachable")
+		}
+		digest.LastTokenType = t.Type()
+	}
+	// If last line not empty, up line count
+	if !digest.EmptyLine {
+		digest.LineCount++
+	}
+	return digest
+}
+
 func TknzStateFun(text string, digest *Digest) ([]string, *Digest) {
 	reader := bytes.NewBuffer([]byte(text))
 	lex := lexer.NewSize(lexFunc, reader, 100, 1)
@@ -59,7 +104,7 @@ func TknzStateFun(text string, digest *Digest) ([]string, *Digest) {
 		lexBytes := t.Bytes()
 		digest.CharCount += len(lexBytes)
 		stringedBytes := string(lexBytes)
-		lexBytesPadded := append(lexBytes, byte(32))
+		lexBytesPadded := append(lexBytes, BytesSpacePadding)
 		switch t.Type() {
 		case T_WORD:
 			if digest.LastTokenType != T_WORD {
