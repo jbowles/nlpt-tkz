@@ -88,15 +88,16 @@ func TestTokenizeLexOption(t *testing.T) {
 }
 
 func TestTokenizeLexOptionForBytes(t *testing.T) {
-	tokens, digest := TokenizeStr(ThoreauThree, "lex")
-	//fmt.Printf("LEX token bytes %v\n", digest.TokenBytes)
-	//fmt.Printf("LEX bytes %v\n", digest.Bytes)
-	//fmt.Printf("LEX bytes stringified %v\n", string(digest.Bytes))
+	digest := TokenizeBytes(ththreeeByte, "lex")
+	fmt.Printf("LEX bytes %v\n", digest.Bytes)
+	fmt.Printf("LEX bytes stringified %v\n", string(digest.Bytes))
 
-	if len(tokens) != 19 {
-		t.Log("Expected thoreauThree to be length=19, got=", len(tokens))
-		t.Fail()
-	}
+	/*
+		if len(tokens) != 19 {
+			t.Log("Expected thoreauThree to be length=19, got=", len(tokens))
+			t.Fail()
+		}
+	*/
 
 	typ := fmt.Sprintf("%T", digest)
 	if typ != "*nlpt_tkz.Digest" {
