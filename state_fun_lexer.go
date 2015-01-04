@@ -7,6 +7,7 @@
 * For now, adapting go_lexer and the word_count example from a fork of https://github.com/iNamik/go_lexer.
  */
 
+//TODO change lexer to use runes instead of bytes, this will give greater range and make it easier to assign code point blocks from go unicode package. For example, punctuation is pretty small but only up to rune 191 is there equality with byte casting.
 package nlpt_tkz
 
 import (
@@ -31,6 +32,9 @@ var (
 	bytesNonWord = []byte{' ', '\t', '\f', '\v', '\n', '\r', '.', '?', '!', ':', '\\', '"', ','}
 	bytesPunct   = []byte{'.', '?', '!', ':', '\\', '"', ',', '(', ')'}
 	bytesSpace   = []byte{' ', '\t', '\f', '\v'}
+	runesNonWord = []rune{' ', '\t', '\f', '\v', '\n', '\r', '.', '?', '!', ':', '\\', '"', ','}
+	runesPunct   = []rune{'.', '?', '!', ':', '\\', '"', ',', '(', ')'}
+	runesSpace   = []rune{' ', '\t', '\f', '\v'}
 )
 
 func NewStateFnDigest() *Digest {
@@ -71,7 +75,7 @@ func TknzStateFunBytes(byteSeq []byte, digest *Digest) *Digest {
 		case T_PUNCT:
 			bufferCache.Write(t.Bytes())
 		case T_NEWLINE:
-			bufferCache.Write(t.Bytes())
+			//bufferCache.Write(t.Bytes())
 		case T_SPACE:
 			bufferCache.Write(t.Bytes())
 		default:
@@ -129,6 +133,7 @@ func TknzStateFun(text string, digest *Digest) ([]string, *Digest) {
 	return digest.Tokens, digest
 }
 
+//TODO change lexer to use runes instead of bytes, this will give greater range and make it easier to assign code point blocks from go unicode package. For example, punctuation is pretty small but only up to rune 191 is there equality with byte casting.
 //lexFunc is a State-Function that matches ranges of bytes, emits those bytes, and returns its own StatFn.
 func lexFunc(l lexer.Lexer) lexer.StateFn {
 	// EOF

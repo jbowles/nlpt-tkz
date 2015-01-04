@@ -78,6 +78,8 @@ func TknzUnicodeBytes(byteSeq []byte, digest *Digest) *Digest {
 			bufferCache.Write([]byte{b})
 		case unicode.IsNumber(runeBytes):
 			bufferCache.Write([]byte{b})
+		case unicode.IsSymbol(runeBytes):
+			bufferCache.Write([]byte{32})
 		}
 	}
 	digest.Bytes = bufferCache.Bytes()
