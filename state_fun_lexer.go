@@ -29,7 +29,7 @@ const (
 
 // List gleaned from isspace(3) manpage
 var (
-	bytesNonWord = []byte{' ', '\t', '\f', '\v', '\n', '\r', '.', '?', '!', ':', '\\', '"', ',', '@', '+', '>', '|', '_', '*'}
+	bytesNonWord = []byte{' ', '\t', '\f', '\v', '\n', '\r', '.', '?', '!', ':', '\\', '"', ','} //, '+', '>', '|', '_', '*'} // '@'} //, '+', '>', '|', '_', '*'}
 	bytesPunct   = []byte{'.', '?', '!', ':', '\\', '"', ',', '(', ')'}
 	bytesSpace   = []byte{' ', '\t', '\f', '\v'}
 	runesNonWord = []rune{' ', '\t', '\f', '\v', '\n', '\r', '.', '?', '!', ':', '\\', '"', ','}
@@ -76,6 +76,7 @@ func TknzStateFunBytes(byteSeq []byte, digest *Digest) *Digest {
 		case T_PUNCT:
 			bufferCache.Write(bytePadding)
 			bufferCache.Write(t.Bytes())
+			bufferCache.Write(bytePadding)
 		case T_NEWLINE:
 			bufferCache.Write(t.Bytes())
 		case T_SPACE:
