@@ -67,6 +67,7 @@ func TknzUnicode(text string, digest *Digest) ([]string, *Digest) {
 
 func TknzUnicodeBytes(byteSeq []byte, digest *Digest) *Digest {
 	bufferCache := new(bytes.Buffer)
+	bytePadding := []byte{32}
 	for _, b := range byteSeq {
 		runeBytes := rune(b)
 		switch true {
@@ -79,7 +80,13 @@ func TknzUnicodeBytes(byteSeq []byte, digest *Digest) *Digest {
 		case unicode.IsNumber(runeBytes):
 			bufferCache.Write([]byte{b})
 		case unicode.IsSymbol(runeBytes):
-			bufferCache.Write([]byte{32})
+			bufferCache.Write(bytePadding)
+			bufferCache.Write([]byte{b})
+			bufferCache.Write(bytePadding)
+		case unicode.IsPunct(runeBytes):
+			bufferCache.Write(bytePadding)
+			bufferCache.Write([]byte{b})
+			bufferCache.Write(bytePadding)
 		}
 	}
 	digest.Bytes = bufferCache.Bytes()
