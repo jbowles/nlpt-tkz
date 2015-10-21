@@ -30,8 +30,8 @@ func BenchmarkStateFnTknzBytesBadStr(b *testing.B) {
 func TestStateFnGoodStr(t *testing.T) {
 	tokens, lxd := TknzStateFun(ThoreauOne, NewStateFnDigest())
 
-	if lxd.TokenCount != 44 {
-		t.Log("Expected word count to be 44, but got", lxd.TokenCount)
+	if lxd.TokenCount != 53 {
+		t.Log("Expected word count to be 53, but got", lxd.TokenCount)
 		t.Fail()
 	}
 
@@ -41,12 +41,12 @@ func TestStateFnGoodStr(t *testing.T) {
 	}
 
 	if lxd.PunctCount != 6 {
-		t.Log("Expected punct count to be 5, but got", lxd.PunctCount)
+		t.Log("Expected punct count to be 6, but got", lxd.PunctCount)
 		t.Fail()
 	}
 
-	if lxd.SpaceCount != 43 {
-		t.Log("Expected space count to be 43, but got", lxd.SpaceCount)
+	if lxd.SpaceCount != 53 {
+		t.Log("Expected space count to be 53, but got", lxd.SpaceCount)
 		t.Fail()
 	}
 
@@ -55,8 +55,8 @@ func TestStateFnGoodStr(t *testing.T) {
 		t.Fail()
 	}
 
-	if lxd.CharCount != 212 {
-		t.Log("Expected char count to be 212, but got", lxd.CharCount)
+	if lxd.CharCount != 231 {
+		t.Log("Expected char count to be 231, but got", lxd.CharCount)
 		t.Fail()
 	}
 
