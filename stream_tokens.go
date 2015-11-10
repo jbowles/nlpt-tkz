@@ -8,10 +8,31 @@ import (
 	"bytes"
 	"gopkg.in/pipe.v2"
 	"io"
+	"log"
 	"os"
 	"path/filepath"
 	"time"
 )
+
+// StreamTokenizedFile streams data from a specified file, tokenizes text on the stream and returns []byte output and error. Error should return nil and []bytes should be greater than one.
+// Since we are only dealing with one file the byte size returned should not be huge and so we simply return the content for the user to handle.
+func StreamTokenizedFile(filePath, tkzType string) ([]byte, error) {
+	//Log.Debug("defining pipe.Line, prepare to stream ONE file: %s", filePath)
+	p := pipe.Line(
+		ReadFileAndTokenize(filePath, tkzType),
+		//pipe.AppendFile("datasets/athiest.txt", 0644),
+	)
+
+	output, err := pipe.CombinedOutput(p)
+	if err != nil {
+		panic(err)
+	}
+	if len(output) < 20 {
+		log.Printf("Check filePath for: '%s' (use StreamTokenizedDirectory for directories). Check that file is not empty!!", filePath)
+	}
+	log.Printf("pipe.Line streaming ONE file finished with byte size: %d", len(output))
+	return output, err
+}
 
 func StreamTokenizedDirectory(directoryPath, writeFile, tkzType string, timeoutLimit time.Duration) {
 	//overwrite the output file
@@ -77,6 +98,47 @@ func PipeFileTokens(readFile, tokenizer string) pipe.Pipe {
 			)
 			//follow each buffer write with a new line
 			bufferCache.Write(byteLining)
+		}
+
+		//close file as soon as we can but no sooner.
+		file.Close()
+		//Log.Debug("streamBytes from tokenzier: %d", bufferCache.Len())
+		_, err = io.Copy(s.Stdout, bufferCache)
+		if err != nil {
+			panic(err)
+		}
+		//file.Close()
+		return err
+	})
+}
+
+// ReadFile reads data from the file at path and writes it to the
+// pipe's stdout. I've hijacked the pipe projects ReadFile function
+// and stuck a text tokenzer inside of it.
+// The tokenizer used here MUST be 'lex' OR 'unicode'. The latter is the fastest but less flexible and comprehensive, while the former is not much slower it will return alot of symbols and punctuation. If all you need is "words" then use the 'unicode' tokenizer.
+func ReadFileAndTokenize(path, tokenizer string) pipe.Pipe {
+	//so we don't fail becuase of bad tokenizer input
+	var tkzType string
+	switch tokenizer {
+	case "unicode":
+		tkzType = tokenizer
+	default:
+		tkzType = "lex"
+	}
+	//Log.Debug("Using tokenizer type: %s", tkzType)
+
+	return pipe.TaskFunc(func(s *pipe.State) error {
+		file, err := os.Open(s.Path(path))
+		//defer file.Close()
+		if err != nil {
+			return err
+		}
+		scanner := bufio.NewScanner(file)
+		bufferCache := new(bytes.Buffer)
+		for scanner.Scan() {
+			bufferCache.Write(
+				TokenizeBytes(scanner.Bytes(), tkzType).Bytes,
+			)
 		}
 
 		//close file as soon as we can but no sooner.
