@@ -11,12 +11,13 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"sync"
 	"time"
 )
 
 // StreamTokenizedFile streams data from a specified file, tokenizes text on the stream and returns []byte output and error. Error should return nil and []bytes should be greater than one.
 // Since we are only dealing with one file the byte size returned should not be huge and so we simply return the content for the user to handle.
-func StreamTokenizedFile(inFile, outFile, tkzType string) ([]byte, error) {
+func StreamTokenizedFile(wg sync.WaitGroup, inFile, outFile, tkzType string) {
 	//Log.Debug("defining pipe.Line, prepare to stream ONE file: %s", filePath)
 	p := pipe.Line(
 		ReadFileAndTokenize(inFile, tkzType),
@@ -31,10 +32,11 @@ func StreamTokenizedFile(inFile, outFile, tkzType string) ([]byte, error) {
 		log.Printf("Check filePath for: '%s' (use StreamTokenizedDirectory for directories). Check that file is not empty!!", inFile)
 	}
 	log.Printf("pipe.Line streaming ONE file finished with byte size: %d", len(output))
-	return output, err
+	//return output, err
+	wg.Done()
 }
 
-func StreamTokenizedDirectory(directoryPath, outFile, tkzType string, timeoutLimit time.Duration) {
+func StreamTokenizedDirectory(wg sync.WaitGroup, directoryPath, outFile, tkzType string, timeoutLimit time.Duration) {
 	//overwrite the output file
 	f, err := os.Create(outFile)
 	f.Close()
@@ -65,6 +67,7 @@ func StreamTokenizedDirectory(directoryPath, outFile, tkzType string, timeoutLim
 			/// *************** DEBUGGING ****************
 		}
 	}(handler, timeoutLimit, tkzType, outFile)
+	wg.Done()
 	//fmt.Printf("read %d files for directory %s", len(handler.FullFilePaths), handler.DirName)
 }
 
