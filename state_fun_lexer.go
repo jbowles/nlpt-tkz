@@ -13,6 +13,7 @@ package nlpt_tkz
 import (
 	"bytes"
 	"github.com/jbowles/go_lexer"
+	"strings"
 )
 
 //Lexer tokens starting from the pre-defined EOF token
@@ -39,17 +40,18 @@ var (
 
 func NewStateFnDigest() *Digest {
 	return &Digest{
-		TokenCount:    0,
-		PunctCount:    0,
-		SpaceCount:    0,
-		LineCount:     0,
-		CharCount:     0,
-		EmptyLine:     true,
-		Tokens:        make([]string, 0, 0),
-		Bytes:         make([]byte, 0, 0),
-		TokenBytes:    make(map[string][]byte),
-		Punct:         make([]string, 0, 0),
-		LastTokenType: T_NIL,
+		TokenCount:     0,
+		PunctCount:     0,
+		SpaceCount:     0,
+		LineCount:      0,
+		CharCount:      0,
+		EmptyLine:      true,
+		Tokens:         make([]string, 0, 0),
+		DowncaseTokens: make([]string, 0, 0),
+		Bytes:          make([]byte, 0, 0),
+		TokenBytes:     make(map[string][]byte),
+		Punct:          make([]string, 0, 0),
+		LastTokenType:  T_NIL,
 	}
 }
 
@@ -65,7 +67,7 @@ func TknzStateFunBytes(byteSeq []byte, digest *Digest) *Digest {
 	lex := lexer.NewSize(lexFunc, reader, 100, 1)
 
 	bufferCache := new(bytes.Buffer)
-	bytePadding := []byte{32}
+	//bytePadding := []byte{32}
 	// Processing the lexer-emitted tokens
 	for t := lex.NextToken(); lexer.TokenTypeEOF != t.Type(); t = lex.NextToken() {
 		switch t.Type() {
@@ -74,9 +76,9 @@ func TknzStateFunBytes(byteSeq []byte, digest *Digest) *Digest {
 				bufferCache.Write(t.Bytes())
 			}
 		case T_PUNCT:
-			bufferCache.Write(bytePadding)
+			//bufferCache.Write(bytePadding)
 			bufferCache.Write(t.Bytes())
-			bufferCache.Write(bytePadding)
+			//bufferCache.Write(bytePadding)
 		case T_NEWLINE:
 			bufferCache.Write(t.Bytes())
 		case T_SPACE:
@@ -106,6 +108,7 @@ func TknzStateFun(text string, digest *Digest) ([]string, *Digest) {
 				digest.TokenCount++
 				digest.Tokens = append(digest.Tokens, stringedBytes)
 				digest.TokenBytes[stringedBytes] = lexBytes
+				digest.DowncaseTokens = append(digest.DowncaseTokens, strings.ToLower(stringedBytes))
 				digest.Bytes = ConcatByteSlice(digest.Bytes, lexBytes)
 			}
 			digest.EmptyLine = false

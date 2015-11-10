@@ -17,43 +17,49 @@ import (
 
 // StreamTokenizedFile streams data from a specified file, tokenizes text on the stream and returns []byte output and error. Error should return nil and []bytes should be greater than one.
 // Since we are only dealing with one file the byte size returned should not be huge and so we simply return the content for the user to handle.
-func StreamTokenizedFile(wg sync.WaitGroup, inFile, outFile, tkzType string) {
-	//Log.Debug("defining pipe.Line, prepare to stream ONE file: %s", filePath)
+func StreamTokenizedFile(wg *sync.WaitGroup, timeoutLimit time.Duration, inFile, outFile, tkzType string) {
+	//overwrite the output file and close, so subsuequent runs don't append but pipes do
+	f, ferr := os.Create(outFile)
+	f.Close()
+	if ferr != nil {
+		wg.Done()
+		panic(ferr)
+	}
+	//overwritten output file and closed it so we start fresh with Append
+
 	p := pipe.Line(
-		ReadFileAndTokenize(inFile, tkzType),
+		//PipeFileTokensOnePerLine(tokenizeAsBytes, inFile, tkzType),
+		PipeFileTokens(inFile, tkzType),
 		pipe.AppendFile(outFile, 0644),
 	)
 
-	output, err := pipe.CombinedOutput(p)
+	_, err := pipe.CombinedOutputTimeout(p, timeoutLimit)
 	if err != nil {
 		panic(err)
 	}
-	if len(output) < 20 {
-		log.Printf("Check filePath for: '%s' (use StreamTokenizedDirectory for directories). Check that file is not empty!!", inFile)
-	}
-	log.Printf("pipe.Line streaming ONE file finished with byte size: %d", len(output))
-	//return output, err
+
+	log.Printf("pipe.Line stream done for input: '%s'   output: '%s'", inFile, outFile)
 	wg.Done()
 }
 
-func StreamTokenizedDirectory(wg sync.WaitGroup, directoryPath, outFile, tkzType string, timeoutLimit time.Duration) {
-	//overwrite the output file
+// StreamTokenizedDirectory will use a custom file handler to sequentially loop through a directory and stream each file trhough PipeFileTokens.
+func StreamTokenizedDirectory(wg *sync.WaitGroup, timeoutLimit time.Duration, directoryPath, outFile, tkzType string) {
+	//overwrite the output file and close, so subsuequent runs don't append but pipes do
 	f, err := os.Create(outFile)
 	f.Close()
 	if err != nil {
+		wg.Done()
 		panic(err)
-		return
 	}
+	//overwritten output file and closed it so we start fresh with Append
 
-	handler := NewFileHandler(directoryPath, "space")
-	go func(handler *FileHandler, timeoutLimit time.Duration, tkzType, outFileWrite string) {
-		for _, file := range handler.FullFilePaths {
+	handler := NewFileHandler(directoryPath, tkzType)
+	go func() {
+		for idx, file := range handler.FullFilePaths {
 			p := pipe.Line(
-				PipeFileTokens(file, tkzType),
-				//pipe.Filter(func(line []byte) bool { return stopList.IsStopWord[string(line)] }),
-				pipe.AppendFile(outFileWrite, 0644),
-				//PipeFileTokens(fileWrite, "unicode"),
-				//pipe.AppendFile(fileWrite, 0644),
+				//PipeFileTokensOnePerLine(tokenizeAsBytes, file, handler.Tokenizer),
+				PipeFileTokens(file, handler.Tokenizer),
+				pipe.AppendFile(outFile, 0644),
 			)
 			_, err := pipe.CombinedOutputTimeout(p, timeoutLimit)
 			//output, err := pipe.CombinedOutputTimeout(p, timeoutLimit)
@@ -62,18 +68,17 @@ func StreamTokenizedDirectory(wg sync.WaitGroup, directoryPath, outFile, tkzType
 			}
 
 			/// *************** DEBUGGING ****************
+			log.Printf("streaming %d/%d ...\n", idx, len(handler.FullFilePaths))
 			//Log.Debug("FILE: %v\n filter %v\n", file, string(output))
 			//Log.Debug("FILE: %v\n tokens %v\n", file, string(output))
 			/// *************** DEBUGGING ****************
 		}
-	}(handler, timeoutLimit, tkzType, outFile)
-	wg.Done()
-	//fmt.Printf("read %d files for directory %s", len(handler.FullFilePaths), handler.DirName)
+		log.Printf("read %d files for directory %s", len(handler.FullFilePaths), handler.DirName)
+		wg.Done()
+	}()
 }
 
-// ReadFile reads data from the file at path and writes it to the
-// pipe's stdout. I've hijacked the pipe projects ReadFile function
-// and stuck a text tokenzer inside of it.
+// PipeFileTokens reads data from the file at path and writes it to the pipe's stdout one token per line so that when we write to a file its a "word" per line. I've hijacked the pipe projects ReadFile function and stuck a text tokenzer inside of it.
 // The tokenizer used here MUST be 'lex' OR 'unicode'. The latter is the fastest but less flexible and comprehensive, while the former is not much slower it will return alot of symbols and punctuation. If all you need is "words" then use the 'unicode' tokenizer.
 func PipeFileTokens(readFile, tokenizer string) pipe.Pipe {
 	//so we don't fail becuase of bad tokenizer input
@@ -88,7 +93,6 @@ func PipeFileTokens(readFile, tokenizer string) pipe.Pipe {
 
 	return pipe.TaskFunc(func(s *pipe.State) error {
 		file, err := os.Open(s.Path(readFile))
-		//defer file.Close()
 		if err != nil {
 			return err
 		}
@@ -99,8 +103,8 @@ func PipeFileTokens(readFile, tokenizer string) pipe.Pipe {
 			bufferCache.Write(
 				TokenizeBytes(scanner.Bytes(), tkzType).Bytes,
 			)
-			//follow each buffer write with a new line
 			bufferCache.Write(byteLining)
+			//follow each buffer write with a new line
 		}
 
 		//close file as soon as we can but no sooner.
@@ -110,48 +114,6 @@ func PipeFileTokens(readFile, tokenizer string) pipe.Pipe {
 		if err != nil {
 			panic(err)
 		}
-		//file.Close()
-		return err
-	})
-}
-
-// ReadFile reads data from the file at path and writes it to the
-// pipe's stdout. I've hijacked the pipe projects ReadFile function
-// and stuck a text tokenzer inside of it.
-// The tokenizer used here MUST be 'lex' OR 'unicode'. The latter is the fastest but less flexible and comprehensive, while the former is not much slower it will return alot of symbols and punctuation. If all you need is "words" then use the 'unicode' tokenizer.
-func ReadFileAndTokenize(path, tokenizer string) pipe.Pipe {
-	//so we don't fail becuase of bad tokenizer input
-	var tkzType string
-	switch tokenizer {
-	case "unicode":
-		tkzType = tokenizer
-	default:
-		tkzType = "lex"
-	}
-	//Log.Debug("Using tokenizer type: %s", tkzType)
-
-	return pipe.TaskFunc(func(s *pipe.State) error {
-		file, err := os.Open(s.Path(path))
-		//defer file.Close()
-		if err != nil {
-			return err
-		}
-		scanner := bufio.NewScanner(file)
-		bufferCache := new(bytes.Buffer)
-		for scanner.Scan() {
-			bufferCache.Write(
-				TokenizeBytes(scanner.Bytes(), tkzType).Bytes,
-			)
-		}
-
-		//close file as soon as we can but no sooner.
-		file.Close()
-		//Log.Debug("streamBytes from tokenzier: %d", bufferCache.Len())
-		_, err = io.Copy(s.Stdout, bufferCache)
-		if err != nil {
-			panic(err)
-		}
-		//file.Close()
 		return err
 	})
 }

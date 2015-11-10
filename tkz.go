@@ -6,22 +6,23 @@ package nlpt_tkz
 import "github.com/jbowles/go_lexer"
 
 type Digest struct {
-	Tokens        []string
-	TokenBytes    map[string][]byte
-	Bytes         []byte
-	SpaceCount    int
-	CharCount     int
-	Letter        []string
-	Title         []string
-	Number        []string
-	Punct         []string
-	Space         []string
-	Symbol        []string
-	TokenCount    int
-	PunctCount    int
-	LineCount     int
-	EmptyLine     bool
-	LastTokenType lexer.TokenType
+	Tokens         []string
+	DowncaseTokens []string
+	TokenBytes     map[string][]byte
+	Bytes          []byte
+	SpaceCount     int
+	CharCount      int
+	Letter         []string
+	Title          []string
+	Number         []string
+	Punct          []string
+	Space          []string
+	Symbol         []string
+	TokenCount     int
+	PunctCount     int
+	LineCount      int
+	EmptyLine      bool
+	LastTokenType  lexer.TokenType
 }
 
 //TokenizeStr is a top-level function to choose tokenizer types: TknzStateFun, TknzUnicode, TknzWhiteSpace.
