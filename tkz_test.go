@@ -108,8 +108,8 @@ func TestTokenizeLexOptionForBytes(t *testing.T) {
 	//fmt.Printf("LEX bytes %v\n", digest.Bytes)
 	//fmt.Printf("LEX bytes stringified %v\n", byteToString)
 
-	if len(digest.Bytes) != 98 {
-		t.Log("Expected ththreeeByte to be length=98, got=", len(digest.Bytes))
+	if len(digest.Bytes) != 96 {
+		t.Log("Expected ththreeeByte to be length=96, got=", len(digest.Bytes))
 		t.Fail()
 	}
 
@@ -125,8 +125,8 @@ func TestTokenizeUnicodeMatchOptionForBytes(t *testing.T) {
 	//fmt.Printf("UNI bytes %v\n", digest.Bytes)
 	//fmt.Printf("UNI bytes stringified %v\n", string(digest.Bytes))
 
-	if len(digest.Bytes) != 98 {
-		t.Log("Expected ththreeeByte to be length=98, got=", len(digest.Bytes))
+	if len(digest.Bytes) != 96 {
+		t.Log("Expected ththreeeByte to be length=96, got=", len(digest.Bytes))
 		t.Fail()
 	}
 
