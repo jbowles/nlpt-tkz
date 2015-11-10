@@ -16,11 +16,11 @@ import (
 
 // StreamTokenizedFile streams data from a specified file, tokenizes text on the stream and returns []byte output and error. Error should return nil and []bytes should be greater than one.
 // Since we are only dealing with one file the byte size returned should not be huge and so we simply return the content for the user to handle.
-func StreamTokenizedFile(filePath, tkzType string) ([]byte, error) {
+func StreamTokenizedFile(inFile, outFile, tkzType string) ([]byte, error) {
 	//Log.Debug("defining pipe.Line, prepare to stream ONE file: %s", filePath)
 	p := pipe.Line(
-		ReadFileAndTokenize(filePath, tkzType),
-		//pipe.AppendFile("datasets/athiest.txt", 0644),
+		ReadFileAndTokenize(inFile, tkzType),
+		pipe.AppendFile(outFile, 0644),
 	)
 
 	output, err := pipe.CombinedOutput(p)
@@ -28,15 +28,15 @@ func StreamTokenizedFile(filePath, tkzType string) ([]byte, error) {
 		panic(err)
 	}
 	if len(output) < 20 {
-		log.Printf("Check filePath for: '%s' (use StreamTokenizedDirectory for directories). Check that file is not empty!!", filePath)
+		log.Printf("Check filePath for: '%s' (use StreamTokenizedDirectory for directories). Check that file is not empty!!", inFile)
 	}
 	log.Printf("pipe.Line streaming ONE file finished with byte size: %d", len(output))
 	return output, err
 }
 
-func StreamTokenizedDirectory(directoryPath, writeFile, tkzType string, timeoutLimit time.Duration) {
+func StreamTokenizedDirectory(directoryPath, outFile, tkzType string, timeoutLimit time.Duration) {
 	//overwrite the output file
-	f, err := os.Create(writeFile)
+	f, err := os.Create(outFile)
 	f.Close()
 	if err != nil {
 		panic(err)
@@ -44,12 +44,12 @@ func StreamTokenizedDirectory(directoryPath, writeFile, tkzType string, timeoutL
 	}
 
 	handler := NewFileHandler(directoryPath, "space")
-	go func(handler *FileHandler, timeoutLimit time.Duration, tkzType, fileWrite string) {
+	go func(handler *FileHandler, timeoutLimit time.Duration, tkzType, outFileWrite string) {
 		for _, file := range handler.FullFilePaths {
 			p := pipe.Line(
 				PipeFileTokens(file, tkzType),
 				//pipe.Filter(func(line []byte) bool { return stopList.IsStopWord[string(line)] }),
-				pipe.AppendFile(fileWrite, 0644),
+				pipe.AppendFile(outFileWrite, 0644),
 				//PipeFileTokens(fileWrite, "unicode"),
 				//pipe.AppendFile(fileWrite, 0644),
 			)
@@ -64,7 +64,7 @@ func StreamTokenizedDirectory(directoryPath, writeFile, tkzType string, timeoutL
 			//Log.Debug("FILE: %v\n tokens %v\n", file, string(output))
 			/// *************** DEBUGGING ****************
 		}
-	}(handler, timeoutLimit, tkzType, writeFile)
+	}(handler, timeoutLimit, tkzType, outFile)
 	//fmt.Printf("read %d files for directory %s", len(handler.FullFilePaths), handler.DirName)
 }
 
