@@ -55,19 +55,23 @@ func CanonicalizeTitle(title string) string {
 	return can
 }
 
-func WritePage(txtByte []byte, outFile, title string) {
+func WritePage(tokenDelimiter byte, txtByte []byte, outFile, title string) {
 	f, err := os.OpenFile(outFile, os.O_APPEND|os.O_WRONLY, 0600)
 	if err != nil {
 		panic(err)
 	}
 	writer := bufio.NewWriter(f)
 	defer f.Close()
+	var writeInput []byte
+	for _, token := range txtByte {
+		writeInput = append(writeInput, token+tokenDelimiter)
+	}
 	writer.Write(txtByte)
 	log.Printf("wikipedia page %s...\n", title)
 	writer.Flush()
 }
 
-func StreamTokenizedWikipediaDump(wg *sync.WaitGroup, inFile, outFile, tkzTyp string) {
+func StreamTokenizedWikipediaDump(wg *sync.WaitGroup, tokenDelim byte, inFile, outFile, tkzTyp string) {
 	var filter, _ = regexp.Compile("^file:.*|^talk:.*|^special:.*|^wikipedia:.*|^wiktionary:.*|^user:.*|^user_talk:.*")
 	//overwrite the output file and close, so subsuequent runs don't append but pipes do
 	f, ferr := os.Create(outFile)
@@ -109,7 +113,7 @@ func StreamTokenizedWikipediaDump(wg *sync.WaitGroup, inFile, outFile, tkzTyp st
 				//p.Title = CanonicalizeTitle(p.Title)
 				m := filter.MatchString(p.Title)
 				if !m && p.Redir.Title == "" {
-					WritePage(TokenizeBytes([]byte(p.Text), tkzTyp).Bytes, outFile, p.Title)
+					WritePage(tokenDelim, TokenizeBytes([]byte(p.Text), tkzTyp).Bytes, outFile, p.Title)
 					total++
 				}
 			}
