@@ -6,7 +6,7 @@ package nlpt_tkz
 import (
 	"bufio"
 	"bytes"
-	"gopkg.in/pipe.v2"
+	"github.com/jbowles/nlpt_tkz/Godeps/_workspace/src/gopkg.in/pipe.v2"
 	"io"
 	"log"
 	"os"

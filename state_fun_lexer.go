@@ -12,7 +12,7 @@ package nlpt_tkz
 
 import (
 	"bytes"
-	"github.com/jbowles/go_lexer"
+	"github.com/jbowles/nlpt_tkz/Godeps/_workspace/src/github.com/jbowles/go_lexer"
 	"strings"
 )
 

@@ -1,3 +1,5 @@
+[![Go Report Card](https://goreportcard.com/badge/github.com/jbowles/nlpt_tkz)](https://goreportcard.com/report/github.com/jbowles/nlpt_tkz)
+
 # nlpt\_tkz
 Natural language tokenizer; supports a simple white space tokenizer (preferable for simple tasks), a unicode pattern-matcher, and state function lexer.
 

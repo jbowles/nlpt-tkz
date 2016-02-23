@@ -3,7 +3,7 @@
  */
 package nlpt_tkz
 
-import "github.com/jbowles/go_lexer"
+import "github.com/jbowles/nlpt_tkz/Godeps/_workspace/src/github.com/jbowles/go_lexer"
 
 type Digest struct {
 	Tokens         []string
