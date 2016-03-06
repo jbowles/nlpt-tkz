@@ -1,0 +1,14 @@
+{
+	"ImportPath": "github.com/jbowles/go_lexer",
+	"GoVersion": "go1.5",
+	"Deps": [
+		{
+			"ImportPath": "github.com/iNamik/go_container/queue",
+			"Rev": "eeed139927beff3de037c192dacb065ae1730057"
+		},
+		{
+			"ImportPath": "github.com/iNamik/go_pkg/bufio/bleeder",
+			"Rev": "318399af75a1104f0298bcffc1e1d828997e09c9"
+		}
+	]
+}
