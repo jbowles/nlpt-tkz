@@ -1,4 +1,4 @@
-package nlpt_tkz
+package tkz
 
 import "unicode"
 

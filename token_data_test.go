@@ -1,4 +1,4 @@
-package nlpt_tkz
+package tkz
 
 /*
 * Load some Constants for easier testing of data

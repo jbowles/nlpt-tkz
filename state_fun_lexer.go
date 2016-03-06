@@ -8,11 +8,11 @@
  */
 
 //TODO change lexer to use runes instead of bytes, this will give greater range and make it easier to assign code point blocks from go unicode package. For example, punctuation is pretty small but only up to rune 191 is there equality with byte casting.
-package nlpt_tkz
+package tkz
 
 import (
 	"bytes"
-	"github.com/jbowles/nlpt_tkz/Godeps/_workspace/src/github.com/jbowles/go_lexer"
+	"github.com/jbowles/go_lexer"
 	"strings"
 )
 

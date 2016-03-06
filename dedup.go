@@ -1,4 +1,4 @@
-package nlpt_tkz
+package tkz
 
 func DeDupBytes(a []byte) []byte {
 	result := []byte{}

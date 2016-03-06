@@ -1,12 +1,12 @@
 /*
 Functions to traverse directories and get file names and stream input file through a tokenizer to an output file
 */
-package nlpt_tkz
+package tkz
 
 import (
 	"bufio"
 	"bytes"
-	"github.com/jbowles/nlpt_tkz/Godeps/_workspace/src/gopkg.in/pipe.v2"
+	"gopkg.in/pipe.v2"
 	"io"
 	"log"
 	"os"

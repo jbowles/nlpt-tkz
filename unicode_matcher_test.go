@@ -1,4 +1,4 @@
-package nlpt_tkz
+package tkz
 
 import (
 	"fmt"
@@ -43,8 +43,8 @@ func TestTknzUnicodeBytes(t *testing.T) {
 	*/
 
 	typ := fmt.Sprintf("%T", digest)
-	if typ != "*nlpt_tkz.Digest" {
-		t.Log("Expected digest to be *nlpt_tkz.StateFnDigest", typ)
+	if typ != "*tkz.Digest" {
+		t.Log("Expected digest to be *tkz.StateFnDigest", typ)
 		t.Fail()
 	}
 }

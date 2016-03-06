@@ -38,7 +38,7 @@ bzip2 -c -d enwiki-latest-pages-articles.xml.bz2
 package main
 
 import (
-	tkz "github.com/jbowles/nlpt_tkz"
+	"github.com/jbowles/nlpt-tkz"
 	"sync"
 	"time"
 )

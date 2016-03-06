@@ -1,4 +1,4 @@
-package nlpt_tkz
+package tkz
 
 func ConcatByteSlice(slice1, slice2 []byte) []byte {
 	new_slice := make([]byte, len(slice1)+len(slice2))
