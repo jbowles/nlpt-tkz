@@ -3,7 +3,7 @@
  */
 package tkz
 
-import "github.com/jbowles/go_lexer"
+import "github.com/jbowles/lexer"
 
 type Digest struct {
 	Tokens         []string

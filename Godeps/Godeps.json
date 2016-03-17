@@ -1,0 +1,23 @@
+{
+	"ImportPath": "github.com/jbowles/nlpt-tkz",
+	"GoVersion": "go1.6",
+	"GodepVersion": "v58",
+	"Deps": [
+		{
+			"ImportPath": "github.com/iNamik/go_container/queue",
+			"Rev": "eeed139927beff3de037c192dacb065ae1730057"
+		},
+		{
+			"ImportPath": "github.com/iNamik/go_pkg/bufio/bleeder",
+			"Rev": "318399af75a1104f0298bcffc1e1d828997e09c9"
+		},
+		{
+			"ImportPath": "github.com/jbowles/lexer",
+			"Rev": "076e603c9f9d59a5f89a4465b686e16d7540a011"
+		},
+		{
+			"ImportPath": "gopkg.in/pipe.v2",
+			"Rev": "3c2ca4d525447ec8b2f606a6974f9c9f40831f26"
+		}
+	]
+}

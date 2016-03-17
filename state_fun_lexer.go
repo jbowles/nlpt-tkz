@@ -12,7 +12,7 @@ package tkz
 
 import (
 	"bytes"
-	"github.com/jbowles/go_lexer"
+	"github.com/jbowles/lexer"
 	"strings"
 )
 
