@@ -67,7 +67,6 @@ func TknzStateFunBytes(byteSeq []byte, digest *Digest) *Digest {
 	lex := lexer.NewSize(lexFunc, reader, 100, 1)
 
 	bufferCache := new(bytes.Buffer)
-	//bytePadding := []byte{32}
 	// Processing the lexer-emitted tokens
 	for t := lex.NextToken(); lexer.TokenTypeEOF != t.Type(); t = lex.NextToken() {
 		switch t.Type() {
@@ -76,9 +75,7 @@ func TknzStateFunBytes(byteSeq []byte, digest *Digest) *Digest {
 				bufferCache.Write(t.Bytes())
 			}
 		case T_PUNCT:
-			//bufferCache.Write(bytePadding)
 			bufferCache.Write(t.Bytes())
-			//bufferCache.Write(bytePadding)
 		case T_NEWLINE:
 			bufferCache.Write(t.Bytes())
 		case T_SPACE:
