@@ -70,26 +70,22 @@ func TknzUnicode(text string, digest *Digest) ([]string, *Digest) {
 
 func TknzUnicodeBytes(byteSeq []byte, digest *Digest) *Digest {
 	bufferCache := new(bytes.Buffer)
-	//bytePadding := []byte{32}
+	bytePadding := []byte{32}
 	for _, b := range byteSeq {
 		runeBytes := rune(b)
 		switch true {
-		//case unicode.IsTitle(runeBytes):
-		//	bufferCache.Write([]byte{b})
+		case unicode.IsTitle(runeBytes):
+			bufferCache.Write([]byte{b})
 		case unicode.IsLetter(runeBytes):
 			bufferCache.Write([]byte{b})
 		case unicode.IsSpace(runeBytes):
 			bufferCache.Write([]byte{b})
 		case unicode.IsNumber(runeBytes):
 			bufferCache.Write([]byte{b})
-			//case unicode.IsSymbol(runeBytes):
-			//bufferCache.Write(bytePadding)
-			//	bufferCache.Write([]byte{b})
-			//bufferCache.Write(bytePadding)
-			//case unicode.IsPunct(runeBytes):
-			//bufferCache.Write(bytePadding)
-			//	bufferCache.Write([]byte{b})
-			//bufferCache.Write(bytePadding)
+		case unicode.IsSymbol(runeBytes):
+			bufferCache.Write(bytePadding)
+		case unicode.IsPunct(runeBytes):
+			bufferCache.Write(bytePadding)
 		}
 	}
 	digest.Bytes = bufferCache.Bytes()
