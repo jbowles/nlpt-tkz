@@ -78,14 +78,18 @@ func TknzUnicodeBytes(byteSeq []byte, digest *Digest) *Digest {
 			bufferCache.Write([]byte{b})
 		case unicode.IsLetter(runeBytes):
 			bufferCache.Write([]byte{b})
-		case unicode.IsSpace(runeBytes):
-			bufferCache.Write([]byte{b})
-		case unicode.IsNumber(runeBytes):
-			bufferCache.Write([]byte{b})
-		case unicode.IsSymbol(runeBytes):
+		case unicode.IsGraphic(runeBytes):
 			bufferCache.Write(bytePadding)
-		case unicode.IsPunct(runeBytes):
-			bufferCache.Write(bytePadding)
+			/*
+				case unicode.IsSpace(runeBytes):
+					bufferCache.Write([]byte{b})
+				case unicode.IsNumber(runeBytes):
+					bufferCache.Write([]byte{b})
+				case unicode.IsSymbol(runeBytes):
+					bufferCache.Write(bytePadding)
+				case unicode.IsPunct(runeBytes):
+					bufferCache.Write(bytePadding)
+			*/
 		}
 	}
 	digest.Bytes = bufferCache.Bytes()
